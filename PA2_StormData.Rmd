@@ -105,6 +105,18 @@ names(totalImpact) <- c("EVENT TYPE", "Total FATALITIES & INJURIES")
 totalImpactRank <- totalImpact[order(-totalImpact$'Total FATALITIES & INJURIES'), ]
 
 ## Top 10 Total FATALITIES + INJURIES causing EVTYPE
-TopHealthImpact <- kable(totalImpactRank[1:10,])
+TopImpact <- kable(totalImpactRank[1:10,])
+TopImpact
+```
+
+```{r, ProcessMergingTwoData}
+## Using the Merge function to combine the two data together to show the health impact
+healthImpact <- merge(fatInj, totalImpact)
+
+## Rank the top health impact on the new combined data
+healthImpactRank <- healthImpact[order(-healthImpact$'Total FATALITIES & INJURIES'), ]
+
+## Top 10 Total Health Impact (FATALITIES + INJURIES) causing EVTYPE
+TopHealthImpact <- kable(healthImpactRank[1:10,])
 TopHealthImpact
 ```
