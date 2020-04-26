@@ -167,13 +167,13 @@ topCrop
 propRank <- cropProp[order(-cropProp$'Property Damage'), ]
 topProp <- kable(propRank[1:10,])
 topProp
-```
 
-```{r, ProcessTotalEconomic}
-## Using Aggregate function to sum the FATALITIES + INJURIES based on EVTYPE and assign it to totalImpact
-totalEconomic <- aggregate((expData$PROP_DMG + expData$CROP_DMG) ~ EVTYPE, data = expData, FUN = sum, na.rm = TRUE)
+## Using Aggregate function to sum the PROPERTY + CROP Damage based on EVTYPE and assign it to totalEconomic
+totalEconomic <- aggregate(expData$PROP_DMG + expData$CROP_DMG ~ EVTYPE, data = expData, FUN = sum, na.rm = TRUE)
 
 ## Assign the column with name the new table of the total FATALITIES and INJURIES combined.
 names(totalEconomic) <- c("EVENT TYPE", "Total CROP & Property in $Million")
+kable(totalEconomic)
 ```
+
 
