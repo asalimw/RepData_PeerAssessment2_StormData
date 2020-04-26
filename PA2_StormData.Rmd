@@ -41,18 +41,20 @@ knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = FALSE)
 ```
 
 ### Data Processing
-To process the data we will be dividing this into three seperate processes. 
+To process the data we will be dividing this section into three seperate processes. 
 
 Firstly we will need to download the data directly from the link provided. Once the data is downloaded we will look at the at different variables needed to solve the two questions on the impact on health and economy. 
 
 Secondly to solve the question on the health impact there are two variables that we need to analyse namely FATALITIES and INJURIES. This will be elaborated further in the processes below
 
 Thirdly to solve the question on economic impact there are four variables that we need to analyse namely CROPDMGEXP, CROPDMG, PROPDMGEXP and PROPDMG. 
-'CROPDMGEXP' is the exponent values for 'CROPDMG' (crop damage). In the same way, 'PROPDMGEXP' is the exponent values for 'PROPDMG' (property damage). You should use both to get the total values for crops and property damage. (B or b = Billion, M or m = Million, K or k = Thousand, H or h = Hundred). This will be elaborated further in the processes below
+'CROPDMGEXP' is the exponent values for 'CROPDMG' (crop damage). In the same way, 'PROPDMGEXP' is the exponent values for 'PROPDMG' (property damage). Both are needed to get the total values for crops and property damage. (B or b = Billion, M or m = Million, K or k = Thousand, H or h = Hundred). This will be elaborated further in the processes below
 
 
 #### Part 1: 
-Download data from the link provided in the sypnosis and read csv bz2 file and assign it to variable data.
+- Download data from the link provided in the sypnosis.
+- Read csv bz2 file and assign it to variable named data.
+- Use Dim function to check the number of observation and variables.
 ```{r, DownloadingData, cache = TRUE}
 ## Set the URL
 url <- 'https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2'  
@@ -121,3 +123,38 @@ TopHealthImpact <- kable(healthImpactRank[1:10,])
 ```
 
 #### Part 3:
+- Use the Aggregate and CBIND function to get the total number of CROPDMGEXP, CROPDMG, PROPDMGEXP and PROPDMG based on the EVTYPE. 
+```{r, ProcessCropPropertiesDAMAGESEXP, cache = TRUE}
+
+expData <- data[data$PROPDMGEXP %in% c("", "K", "M", "B") & data$CROPDMGEXP %in% c("", "K", "M", "B"), ]
+
+convExponent <- function(dmg, exp) {
+    if (exp == "K") {
+        dmg * 1000
+    } else if (exp == "M") {
+        dmg * 1e+06
+    } else if (exp == "B") {
+        dmg * 1e+09
+    } else if (exp == "") {
+        dmg
+    } else {
+        stop("NOT VALID DATA")
+    }
+}
+
+expData$PROP_DMG <- mapply(convExponent, expData$PROPDMG, expData$PROPDMGEXP)/1000000
+expData$CROP_DMG <- mapply(convExponent, expData$CROPDMG, expData$CROPDMGEXP)/1000000
+
+
+cropProp <- aggregate(cbind(expData$PROP_DMG, expData$CROP_DMG)~EVTYPE,data = expData, FUN = sum, na.rm = TRUE)
+
+names(cropProp) <- c("EVENT TYPE", "Property Damage in $million", "Crop Damage in $million")
+
+cropRank <- cropProp[order(-cropProp$'Crop Damage'), ]
+topCrop <- kable(cropRank[1:10,])
+topCrop
+
+propRank <- cropProp[order(-cropProp$'Property Damage'), ]
+topProp <- kable(propRank[1:10,])
+topProp
+```
