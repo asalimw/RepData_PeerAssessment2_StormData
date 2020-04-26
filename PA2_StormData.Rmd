@@ -37,6 +37,7 @@ library(lubridate)
 ```{r setoptions, echo=FALSE}
 ## Setting Global Option where echo = true so that someone will be able to read the code and results.
 knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = FALSE)
+
 ```
 
 ### Data Processing
@@ -50,9 +51,9 @@ Thirdly to solve the question on economic impact there are four variables that w
 'CROPDMGEXP' is the exponent values for 'CROPDMG' (crop damage). In the same way, 'PROPDMGEXP' is the exponent values for 'PROPDMG' (property damage). You should use both to get the total values for crops and property damage. (B or b = Billion, M or m = Million, K or k = Thousand, H or h = Hundred). This will be elaborated further in the processes below
 
 
+#### Part 1: 
+Download data from the link provided in the sypnosis and read csv bz2 file and assign it to variable data.
 ```{r, DownloadingData, cache = TRUE}
-## Part 1: Download data from the link provided in the sypnosis and read csv bz2 file and assign it to variable data.
-
 ## Set the URL
 url <- 'https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2'  
 
@@ -70,9 +71,13 @@ Based on the data downloaded there are 902297 records and 37 variables.
 
 
 
-```{r, ProcessFatalitiesInjuries}
-##Part 2: Using the Aggregate and CBIND function to get the total number of FATALITIES and INJURIES based on the EVTYPE. Then we move on to total the FATALITIES + INJURIES based on the EVTYPE. Next we use the MERGE function to combine these two data together.
 
+#### Part 2: 
+- Use the Aggregate and CBIND function to get the total number of FATALITIES and INJURIES based on the EVTYPE. 
+- Sum up the FATALITIES + INJURIES based on the EVTYPE. 
+- Use the MERGE function to combine these two data together.
+
+```{r, ProcessFatalitiesInjuries}
 ## Using Aggregate and CBIND to sum the total FATALITIES and INJURIES based on EVTYPE and assign it to fatInj
 fatInj <- aggregate(cbind(FATALITIES,INJURIES)~EVTYPE,data = data, FUN = sum, na.rm = TRUE)
 
@@ -100,13 +105,6 @@ totalImpact <- aggregate((FATALITIES + INJURIES) ~ EVTYPE, data = data, FUN = su
 
 ## Assign the column with name the new table of the total FATALITIES and INJURIES combined.
 names(totalImpact) <- c("EVENT TYPE", "Total FATALITIES & INJURIES")
-
-## Rank the top combine impact of FATALITIES + INJURIES
-totalImpactRank <- totalImpact[order(-totalImpact$'Total FATALITIES & INJURIES'), ]
-
-## Top 10 Total FATALITIES + INJURIES causing EVTYPE
-TopImpact <- kable(totalImpactRank[1:10,])
-TopImpact
 ```
 
 ```{r, ProcessMergingTwoData}
@@ -118,5 +116,8 @@ healthImpactRank <- healthImpact[order(-healthImpact$'Total FATALITIES & INJURIE
 
 ## Top 10 Total Health Impact (FATALITIES + INJURIES) causing EVTYPE
 TopHealthImpact <- kable(healthImpactRank[1:10,])
-TopHealthImpact
+
+## Please go to the Result section to look at the top 10 health impact based on EVTYPE.
 ```
+
+#### Part 3:
