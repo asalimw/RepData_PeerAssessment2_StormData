@@ -40,14 +40,14 @@ knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = TRUE)
 ```
 
 ### Data Processing
-To process the data we divided this into three seperate processes. 
+To process the data we will be dividing this into three seperate processes. 
 
-First we will need to download the data directly from the link provided. Once the data is downloaded we will look at the at different variables needed to solve the two questions on the impact on health and economy. 
+Firstly we will need to download the data directly from the link provided. Once the data is downloaded we will look at the at different variables needed to solve the two questions on the impact on health and economy. 
 
 Secondly to solve the question on the health impact there are two variables that we need to analyse namely FATALITIES and INJURIES. This will be elaborated further in the processes below
 
 Thirdly to solve the question on economic impact there are four variables that we need to analyse namely CROPDMGEXP, CROPDMG, PROPDMGEXP and PROPDMG. 
-'CROPDMGEXP' is the exponent values for 'CROPDMG' (crop damage). In the same way, 'PROPDMGEXP' is the exponent values for 'PROPDMG' (property damage). You should use both to get the total values for crops and property damage. (B or b = Billion, M or m = Million, K or k = Thousand, H or h = Hundred).
+'CROPDMGEXP' is the exponent values for 'CROPDMG' (crop damage). In the same way, 'PROPDMGEXP' is the exponent values for 'PROPDMG' (property damage). You should use both to get the total values for crops and property damage. (B or b = Billion, M or m = Million, K or k = Thousand, H or h = Hundred). This will be elaborated further in the processes below
 
 
 ```{r, DownloadingData, cache =TRUE}
