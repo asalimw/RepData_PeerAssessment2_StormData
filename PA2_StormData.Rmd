@@ -56,12 +56,12 @@ Thirdly to solve the question on economic impact there are four variables that w
 ## Assign URL
 url <- 'https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2'  
 
-## Download the file 
+## Download the file and checked that the bz2 file is 46.8 MB (49,177,144 bytes) according to the info in week 4 forum discussion.
 download.file(url, destfile='repdata-data-StormData.csv.bz2', mode='wb')  
 
 ## Read the csv bz file and assign to data.
 data <- read.csv("repdata-data-StormData.csv.bz2", header = TRUE, sep = ",", na.strings = "NA")
 
 ## Look at the total number of observations and variables whether it is the same as the Week 4 Forum discussion which is 902297 records and 37 variables.
-str(data)
+dim(data)
 ```
