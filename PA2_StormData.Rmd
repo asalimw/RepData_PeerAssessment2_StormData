@@ -123,18 +123,22 @@ TopHealthImpact <- kable(healthImpactRank[1:10,])
 ```
 
 #### Part 3:
-- Use the Aggregate and CBIND function to get the total number of CROPDMGEXP, CROPDMG, PROPDMGEXP and PROPDMG based on the EVTYPE. 
+- Convert exponent value DMGEXP of both the crop and property for total damage comparison
+- Use the Aggregate and CBIND function to get the total number of the converted damage of both crop and property based on the EVTYPE. 
+- Combine both the new crop and property damage to assess the total economic impact
 ```{r, ProcessCropPropertiesDAMAGESEXP, cache = TRUE}
 
+## Retrieving values of exponents 
 expData <- data[data$PROPDMGEXP %in% c("", "K", "M", "B") & data$CROPDMGEXP %in% c("", "K", "M", "B"), ]
 
+## Create function to convert exponent values to calculate total damages using DMG * Exponent
 convExponent <- function(dmg, exp) {
     if (exp == "K") {
         dmg * 1000
     } else if (exp == "M") {
-        dmg * 1e+06
+        dmg * 10^6
     } else if (exp == "B") {
-        dmg * 1e+09
+        dmg * 10^9
     } else if (exp == "") {
         dmg
     } else {
@@ -142,19 +146,34 @@ convExponent <- function(dmg, exp) {
     }
 }
 
-expData$PROP_DMG <- mapply(convExponent, expData$PROPDMG, expData$PROPDMGEXP)/1000000
-expData$CROP_DMG <- mapply(convExponent, expData$CROPDMG, expData$CROPDMGEXP)/1000000
+## Using MAPPLY function to get the new property damage value in million dollars value
+expData$PROP_DMG <- mapply(convExponent, expData$PROPDMG, expData$PROPDMGEXP)/10^6
 
+## Using MAPPLY function to get the new crop damage value in million dollar value
+expData$CROP_DMG <- mapply(convExponent, expData$CROPDMG, expData$CROPDMGEXP)/10^6
 
+## Using Aggregate and CBIND to sum the total property and crop damage based on EVTYPE
 cropProp <- aggregate(cbind(expData$PROP_DMG, expData$CROP_DMG)~EVTYPE,data = expData, FUN = sum, na.rm = TRUE)
 
+## Assign the column with names for the new table.
 names(cropProp) <- c("EVENT TYPE", "Property Damage in $million", "Crop Damage in $million")
 
+## Rank the top crop damage based on EVTYPE
 cropRank <- cropProp[order(-cropProp$'Crop Damage'), ]
 topCrop <- kable(cropRank[1:10,])
 topCrop
 
+## Rank the top property damage based on EVTYPE
 propRank <- cropProp[order(-cropProp$'Property Damage'), ]
 topProp <- kable(propRank[1:10,])
 topProp
 ```
+
+```{r, ProcessTotalEconomic}
+## Using Aggregate function to sum the FATALITIES + INJURIES based on EVTYPE and assign it to totalImpact
+totalEconomic <- aggregate((expData$PROP_DMG + expData$CROP_DMG) ~ EVTYPE, data = expData, FUN = sum, na.rm = TRUE)
+
+## Assign the column with name the new table of the total FATALITIES and INJURIES combined.
+names(totalEconomic) <- c("EVENT TYPE", "Total CROP & Property in $Million")
+```
+
