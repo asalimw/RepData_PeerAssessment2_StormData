@@ -36,7 +36,7 @@ library(lubridate)
 
 ```{r setoptions, echo=FALSE}
 ## Setting Global Option where echo = true so that someone will be able to read the code and results.
-knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = TRUE)
+knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = FALSE)
 ```
 
 ### Data Processing
@@ -50,10 +50,10 @@ Thirdly to solve the question on economic impact there are four variables that w
 'CROPDMGEXP' is the exponent values for 'CROPDMG' (crop damage). In the same way, 'PROPDMGEXP' is the exponent values for 'PROPDMG' (property damage). You should use both to get the total values for crops and property damage. (B or b = Billion, M or m = Million, K or k = Thousand, H or h = Hundred). This will be elaborated further in the processes below
 
 
-```{r, DownloadingData, cache =TRUE}
+```{r, DownloadingData, cache = TRUE}
 ## Part 1: Download data from the link provided in the sypnosis and read csv bz2 file and assign it to variable data.
 
-## Assign URL
+## Set the URL
 url <- 'https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2'  
 
 ## Download the file and checked that the bz2 file is 46.8 MB (49,177,144 bytes) according to the info in week 4 forum discussion.
@@ -65,3 +65,26 @@ data <- read.csv("repdata-data-StormData.csv.bz2", header = TRUE, sep = ",", na.
 ## Look at the total number of observations and variables whether it is the same as the Week 4 Forum discussion which is 902297 records and 37 variables.
 dim(data)
 ```
+
+```{r, HealthImpact}
+##Part 2: Using the Aggregate and CBIND function to get the total number of FATALITIES and INJURIES based on the EVTYPE. Then we move on to total the FATALITIES + INJURIES based on the EVTYPE. Next we use the MERGE function to combine these two data together.
+
+## Using Aggregate and CBIND to sum the total FATALITIES and INJURIES based on EVTYPE and assign it to fatInj
+fatInj <- aggregate(cbind(FATALITIES,INJURIES)~EVTYPE,data = data, FUN = sum, na.rm = TRUE)
+
+## Assign the column with names.
+names(fatInj) <- c("EVENT_TYPE", "FATALITIES", "INJURIES")
+
+## Rank the top 10 INJURIES based on EVTYPE
+injuriesRank <- fatInj[order(-fatInj$INJURIES), ]
+
+## Rank the top 10 FATALITIES based on EVTYPE
+fatalitiesRank <- fatInj[order(-fatInj$FATALITIES), ]
+
+## Top 10 INJURIES causing EVTYPE
+kable(injuriesRank[1:10,])
+
+## Top 10 FATALITIES causing EVTYPE
+kable(fatalitiesRank[1:10,])
+```
+
