@@ -44,12 +44,14 @@ To process the data we divided this into three seperate processes.
 
 First we will need to download the data directly from the link provided. Once the data is downloaded we will look at the at different variables needed to solve the two questions on the impact on health and economy. 
 
-Secondly to solve the question on the health impact there are two variables that we need to analyse namely fatalities and injuries. This will be elaborated further in the processes below
+Secondly to solve the question on the health impact there are two variables that we need to analyse namely FATALITIES and INJURIES. This will be elaborated further in the processes below
 
-Thirdly to solve the question on economic impact there are four variables that we need to analyse namely 
+Thirdly to solve the question on economic impact there are four variables that we need to analyse namely CROPDMGEXP, CROPDMG, PROPDMGEXP and PROPDMG. 
+'CROPDMGEXP' is the exponent values for 'CROPDMG' (crop damage). In the same way, 'PROPDMGEXP' is the exponent values for 'PROPDMG' (property damage). You should use both to get the total values for crops and property damage. (B or b = Billion, M or m = Million, K or k = Thousand, H or h = Hundred).
+
 
 ```{r, DownloadingData, cache =TRUE}
-## Download data from the link provided in the sypnosis and read csv bz2 file and assign it to variable data.
+## Part 1: Download data from the link provided in the sypnosis and read csv bz2 file and assign it to variable data.
 
 ## Assign URL
 url <- 'https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2'  
@@ -60,6 +62,6 @@ download.file(url, destfile='repdata-data-StormData.csv.bz2', mode='wb')
 ## Read the csv bz file and assign to data.
 data <- read.csv("repdata-data-StormData.csv.bz2", header = TRUE, sep = ",", na.strings = "NA")
 
-## Look at the total number of observations and variables whether it is the same as the Week 4 Forum discussion
+## Look at the total number of observations and variables whether it is the same as the Week 4 Forum discussion which is 902297 records and 37 variables.
 str(data)
 ```
