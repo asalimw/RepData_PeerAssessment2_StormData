@@ -199,7 +199,7 @@ expData$CROP_DMG <- mapply(convExponent, expData$CROPDMG, expData$CROPDMGEXP)/10
 cropProp <- aggregate(cbind(expData$PROP_DMG, expData$CROP_DMG)~EVTYPE,data = expData, FUN = sum, na.rm = TRUE)
 
 ## Assign the column with names for the new table.
-names(cropProp) <- c("EVENT TYPE", "Property Damage in $million", "Crop Damage in $million")
+names(cropProp) <- c("EVENT_TYPE", "Property Damage in $million", "Crop Damage in $million")
 ```
 
 ```{r, CropPropertiesDAMAGESRank}
@@ -221,7 +221,7 @@ topProp
 totalEconomic <- aggregate((expData$PROP_DMG + expData$CROP_DMG) ~ EVTYPE, data = expData, FUN = sum, na.rm = TRUE)
 
 ## Assign the column with name the new table of the total FATALITIES and INJURIES combined.
-names(totalEconomic) <- c("EVENT_TYPE", "Total_Crop_&_Property_Damage_in_$Million")
+names(totalEconomic) <- c("EVENT_TYPE", "Total_Crop_&_Property_Damage")
 ```
 
 
@@ -233,7 +233,7 @@ economicImpact <- merge(cropProp, totalEconomic)
 economicImpactRank <- economicImpact[order(-economicImpact$'Total_Crop_&_Property_Damage'), ]
 
 ## Top 10 Total Health Impact (CROP + PROPERTY DAMAGE) causing EVTYPE
-topEconomicImpact <- kable(economicImpactRank[1:10,])
+topEconomicImpact <- kable(economicImpactRank[1:10, ])
 
 ## Please go to the Result section to look at the top 10 economic impact based on EVTYPE.
 ```
@@ -266,7 +266,7 @@ This is based on the data collected from U.S. National Oceanic and Atmospheric A
 ##### Question 2: Across the United States, which types of events have the greatest economic consequences?
 **ANS: **
 <br />
-**The following table and plot will show you the top 10 event type that has the gratest economic consequences.**
+**The following table and plot will show you the top 10 event type that has the greatest economic consequences.**
 `r topEconomicImpact`
 
 
