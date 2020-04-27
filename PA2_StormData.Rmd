@@ -5,10 +5,18 @@ date: "20/04/2020"
 output: html_document
 ---
 
-The platform specification used to process and analyse data - OS: Windows 10 Pro 64bit - CPU: AMD Ryzen 5 3400G - RAM: 16GB - Storage: 500GB NVME SSD 
+The platform specification used to process and analyse data:
 
+Spec    | Description
+------- | -----------------------
+OS      | Windows 10 Pro - 64 bit
+CPU     | AMD Ryzen 5 - 3400G
+RAM     | 16GB DDR4 3000MHz
+Storage | 500GB SSD - M.2 NVMe (PCIe) 
 
 ## Severe Weather Events in USA Impact on Health and Economy
+
+***
 
 ### Sypnosis
 
@@ -43,6 +51,8 @@ knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = FALSE)
 
 ```
 
+***
+
 ### Data Processing
 To process the data we will be dividing this section into three seperate processes. 
 
@@ -58,7 +68,7 @@ Thirdly to solve the question on economic impact there are four variables that w
 - Download data from the link provided in the sypnosis.
 - Read csv bz2 file and assign it to variable named data.
 - Use Dim function to check the number of observation and variables.
-```{r, DownloadingData, cache = TRUE}
+```{r, DownloadingData, error=TRUE, cache=TRUE}
 ## Set the URL
 url <- 'https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2'  
 
@@ -72,19 +82,25 @@ rawData <- read.csv("repdata-data-StormData.csv.bz2", header = TRUE, sep = ",", 
 dim(rawData)
 ```
 
-Based on the data downloaded there are 902297 records and 37 variables.
+**Based on the raw data downloaded there are `r nrow(rawData)` observations and `r ncol(rawData)` variables.**  
 
+***
 
-As there are close to a million observations in the raw data and it is important that we do not waste any unnecessary resources to process this data.Therefore we will need to Prepare only the relevant data to support our answers on the questions on health and economic impact.
+As there are close to a million observations in the raw data, it is important that we do not waste any unnecessary resources to process the data.Therefore we will need to Prepare only the relevant data to answer the questions on health and economic impact.
 
 ```{r, PreparedData, cache = TRUE}
+## Create a Subset of FATALITIES or INJURIES data that contains more than 0.
 healthData <- rawData[(rawData$FATALITIES >0) | (rawData$INJURIES > 0),] 
-kable(dim(healthData))
+dim(healthData)
 
+## Create a Subset of CROPDMG or PROPDMG data that contains more than 0.
 economicData <- rawData[(rawData$CROPDMG > 0) | (rawData$PROPDMG > 0),]
 dim(economicData)
 ```
-The relevant health data contains 'r dim(healthData)'
+
+**The relevant health data contains `r nrow(healthData)` observations and `r ncol(healthData)` variables where as the relevant economic data contains `r nrow(economicData)` observations and `r ncol(economicData)` variables.**
+
+***
 
 #### Part 2: 
 - Use the Aggregate and CBIND function to get the total number of FATALITIES and INJURIES based on the EVTYPE. 
@@ -133,6 +149,8 @@ TopHealthImpact <- kable(healthImpactRank[1:10,])
 
 ## Please go to the Result section to look at the top 10 health impact based on EVTYPE.
 ```
+
+***
 
 #### Part 3:
 - Convert exponent value DMGEXP of both the crop and property for total damage comparison
@@ -184,5 +202,7 @@ topProp <- kable(propRank[1:10,])
 topProp
 ```
 
+***
 
+### Results
 
