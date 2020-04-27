@@ -66,16 +66,25 @@ url <- 'https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2
 download.file(url, destfile='repdata-data-StormData.csv.bz2', mode='wb')  
 
 ## Read the csv bz file and assign to data.
-data <- read.csv("repdata-data-StormData.csv.bz2", header = TRUE, sep = ",", na.strings = "NA")
+rawData <- read.csv("repdata-data-StormData.csv.bz2", header = TRUE, sep = ",", na.strings = "NA")
 
 ## Look at the total number of observations and variables whether it is the same as the Week 4 Forum discussion which is 902297 records and 37 variables.
-dim(data)
+dim(rawData)
 ```
 
 Based on the data downloaded there are 902297 records and 37 variables.
 
 
+As there are close to a million observations in the raw data and it is important that we do not waste any unnecessary resources to process this data.Therefore we will need to Prepare only the relevant data to support our answers on the questions on health and economic impact.
 
+```{r, PreparedData, cache = TRUE}
+healthData <- rawData[(rawData$FATALITIES >0) | (rawData$INJURIES > 0),] 
+kable(dim(healthData))
+
+economicData <- rawData[(rawData$CROPDMG > 0) | (rawData$PROPDMG > 0),]
+dim(economicData)
+```
+The relevant health data contains 'r dim(healthData)'
 
 #### Part 2: 
 - Use the Aggregate and CBIND function to get the total number of FATALITIES and INJURIES based on the EVTYPE. 
@@ -84,7 +93,7 @@ Based on the data downloaded there are 902297 records and 37 variables.
 
 ```{r, ProcessFatalitiesInjuries}
 ## Using Aggregate and CBIND to sum the total FATALITIES and INJURIES based on EVTYPE and assign it to fatInj
-fatInj <- aggregate(cbind(FATALITIES,INJURIES)~EVTYPE,data = data, FUN = sum, na.rm = TRUE)
+fatInj <- aggregate(cbind(FATALITIES,INJURIES)~EVTYPE,data = healthData, FUN = sum, na.rm = TRUE)
 
 ## Assign the column with names for the new table.
 names(fatInj) <- c("EVENT TYPE", "FATALITIES", "INJURIES")
@@ -133,7 +142,7 @@ TopHealthImpact <- kable(healthImpactRank[1:10,])
 ```{r, ProcessCropPropertiesDAMAGESEXP, cache = TRUE}
 
 ## Retrieving values of exponents 
-expData <- data[data$PROPDMGEXP %in% c("", "K", "M", "B") & data$CROPDMGEXP %in% c("", "K", "M", "B"), ]
+expData <- economicData[economicData$PROPDMGEXP %in% c("", "K", "M", "B") & economicData$CROPDMGEXP %in% c("", "K", "M", "B"), ]
 
 ## Create function to convert exponent values to calculate total damages using DMG * Exponent
 convExponent <- function(dmg, exp) {
@@ -169,7 +178,7 @@ topCrop
 
 ## Rank the top property damage based on EVTYPE
 propRank <- cropProp[order(-cropProp$'Property Damage'), ]
-topProp <- kable(propRank[1:10, c(1,3)])
+topProp <- kable(propRank[1:10,])
 topProp
 ```
 
