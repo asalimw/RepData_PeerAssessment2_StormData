@@ -1,8 +1,8 @@
 ---
 title: "PA2_StormData.Rmd"
-    author: "Willianto"
-        date: "20/04/2020"
-            output: html_document
+author: "Willianto"
+date: "20/04/2020"
+output: html_document
 ---
 
 The platform specification used to process and analyse data:
@@ -14,9 +14,11 @@ CPU     | AMD Ryzen 5 - 3400G
 RAM     | 16GB DDR4 3000MHz
 Storage | 500GB SSD - M.2 NVMe (PCIe) 
 
+***
+
 ## Severe Weather Events in USA Impact on Health and Economy
 
-***
+
 
 ### Sypnosis
 
@@ -145,7 +147,7 @@ healthImpact <- merge(fatInj, totalImpact)
 healthImpactRank <- healthImpact[order(-healthImpact$'Total FATALITIES & INJURIES'), ]
 
 ## Top 10 Total Health Impact (FATALITIES + INJURIES) causing EVTYPE
-TopHealthImpact <- kable(healthImpactRank[1:10,])
+topHealthImpact <- kable(healthImpactRank[1:10,])
 
 ## Please go to the Result section to look at the top 10 health impact based on EVTYPE.
 ```
@@ -230,7 +232,10 @@ topEconomicImpact
 
 ### Results
 
-#### Impact on Population Health
+#### 1. Across the United States, which types of events are most harmful with respect to population health?
+**ANS: **
+** The following table will show you the top 10 health impact per event type **
+
 
 
 
