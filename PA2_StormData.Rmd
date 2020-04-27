@@ -45,6 +45,7 @@ The result with graphs and conclusion will be displayed in the last part.
 library(knitr)
 library(ggplot2)
 library(lubridate)
+library(lattice)
 ```
 
 ```{r setoptions, echo=FALSE}
@@ -114,7 +115,7 @@ dim(economicData)
 fatInj <- aggregate(cbind(FATALITIES,INJURIES)~EVTYPE,data = healthData, FUN = sum, na.rm = TRUE)
 
 ## Assign the column with names for the new table.
-names(fatInj) <- c("EVENT TYPE", "FATALITIES", "INJURIES")
+names(fatInj) <- c("EVENT_TYPE", "FATALITIES", "INJURIES")
 
 ## Rank the top INJURIES based on EVTYPE
 injuriesRank <- fatInj[order(-fatInj$INJURIES), ]
@@ -136,7 +137,9 @@ topFatalities
 totalImpact <- aggregate((FATALITIES + INJURIES) ~ EVTYPE, data = healthData, FUN = sum, na.rm = TRUE)
 
 ## Assign the column with name the new table of the total FATALITIES and INJURIES combined.
-names(totalImpact) <- c("EVENT TYPE", "Total FATALITIES & INJURIES")
+names(totalImpact) <- c("EVENT_TYPE", "Total_FATALITIES_&_INJURIES")
+
+totalImpact = totalImpact[order(-totalImpact$`Total_FATALITIES_&_INJURIES`), ]
 ```
 
 ```{r, ProcessMergingTwoData}
@@ -144,12 +147,19 @@ names(totalImpact) <- c("EVENT TYPE", "Total FATALITIES & INJURIES")
 healthImpact <- merge(fatInj, totalImpact)
 
 ## Rank the top health impact on the new combined data
-healthImpactRank <- healthImpact[order(-healthImpact$'Total FATALITIES & INJURIES'), ]
+healthImpact <- healthImpact[order(-healthImpact$`Total_FATALITIES_&_INJURIES`), ]
 
 ## Top 10 Total Health Impact (FATALITIES + INJURIES) causing EVTYPE
-topHealthImpact <- kable(healthImpactRank[1:10,])
+topHealthImpact <- kable(healthImpact[1:10,])
 
 ## Please go to the Result section to look at the top 10 health impact based on EVTYPE.
+```
+
+
+```{r, healthPlot}
+healthPlot <- ggplot(totalImpact[1:10, ], aes(x= reorder('EVENT_TYPE', 'Total_FATALITIES_&_INJURIES'), y='Total_FATALITIES_&_INJURIES')) + geom_bar(stat = "identity",fill="blue") + coord_flip() + labs(x = "Event types", y = "Fatalities & Injuries", title = "Top 10 Fatalities & Injuries Weather Events")
+
+healthPlot
 ```
 
 ***
@@ -211,7 +221,7 @@ topProp
 totalEconomic <- aggregate((expData$PROP_DMG + expData$CROP_DMG) ~ EVTYPE, data = expData, FUN = sum, na.rm = TRUE)
 
 ## Assign the column with name the new table of the total FATALITIES and INJURIES combined.
-names(totalEconomic) <- c("EVENT TYPE", "Total Crop & Property Damage in $Million")
+names(totalEconomic) <- c("EVENT_TYPE", "Total_Crop_&_Property_Damage_in_$Million")
 ```
 
 
@@ -220,13 +230,21 @@ names(totalEconomic) <- c("EVENT TYPE", "Total Crop & Property Damage in $Millio
 economicImpact <- merge(cropProp, totalEconomic)
 
 ## Rank the top economic impact on the new combined data
-economicImpactRank <- economicImpact[order(-economicImpact$'Total Crop & Property Damage'), ]
+economicImpactRank <- economicImpact[order(-economicImpact$'Total_Crop_&_Property_Damage'), ]
 
 ## Top 10 Total Health Impact (CROP + PROPERTY DAMAGE) causing EVTYPE
 topEconomicImpact <- kable(economicImpactRank[1:10,])
 
 ## Please go to the Result section to look at the top 10 economic impact based on EVTYPE.
 ```
+
+```{r, economyPlot}
+economyPlot <- ggplot(economicImpact[1:10, ], aes(x= reorder('EVENT_TYPE', 'Total_Crop_&_Property_Damage'), y='Total_Crop_&_Property_Damage')) + geom_bar(stat = "identity",fill="blue") + coord_flip() + labs(x = "Event types", y = "Crop & Property Damage", title = "Top 10 Crop & Property Damaging Weather Events")
+
+economyPlot
+```
+
+
 ***
 
 ### Results
@@ -250,4 +268,6 @@ This is based on the data collected from U.S. National Oceanic and Atmospheric A
 <br />
 **The following table and plot will show you the top 10 event type that has the gratest economic consequences.**
 `r topEconomicImpact`
+
+
 
