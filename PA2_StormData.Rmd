@@ -5,6 +5,9 @@ date: "20/04/2020"
 output: html_document
 ---
 
+The platform specification used to process and analyse data - OS: Windows 10 Pro 64bit - CPU: AMD Ryzen 5 3400G - RAM: 16GB - Storage: 500GB NVME SSD 
+
+
 ## Severe Weather Events in USA Impact on Health and Economy
 
 ### Sypnosis
@@ -25,10 +28,7 @@ This report will use the NOAA Storm Database to answer the following two questio
 
 2. Across the United States, which types of events have the greatest economic consequences?
 
-The result with graphs and conclusion will be displayed in the last part. The following is the specification of platform use to process and analyse data.
-OS: Windows 10 Pro 64bit
-CPU: AMD Ryzen 5 3400G
-RAM: 16GB
+The result with graphs and conclusion will be displayed in the last part. 
 
 
 ```{r load_packages, include=FALSE}
@@ -115,7 +115,7 @@ topFatalities
 
 ```{r, ProcessTotalFatalitiesInjuries}
 ## Using Aggregate function to sum the FATALITIES + INJURIES based on EVTYPE and assign it to totalImpact
-totalImpact <- aggregate((FATALITIES + INJURIES) ~ EVTYPE, data = data, FUN = sum, na.rm = TRUE)
+totalImpact <- aggregate((FATALITIES + INJURIES) ~ EVTYPE, data = healthData, FUN = sum, na.rm = TRUE)
 
 ## Assign the column with name the new table of the total FATALITIES and INJURIES combined.
 names(totalImpact) <- c("EVENT TYPE", "Total FATALITIES & INJURIES")
@@ -170,7 +170,9 @@ cropProp <- aggregate(cbind(expData$PROP_DMG, expData$CROP_DMG)~EVTYPE,data = ex
 
 ## Assign the column with names for the new table.
 names(cropProp) <- c("EVENT TYPE", "Property Damage in $million", "Crop Damage in $million")
+```
 
+```{r, CropPropertiesDAMAGESRank}
 ## Rank the top crop damage based on EVTYPE
 cropRank <- cropProp[order(-cropProp$'Crop Damage'), ]
 topCrop <- kable(cropRank[1:10,])
