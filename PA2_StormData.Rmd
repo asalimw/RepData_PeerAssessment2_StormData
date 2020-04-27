@@ -1,8 +1,8 @@
 ---
 title: "PA2_StormData.Rmd"
-author: "Willianto"
-date: "20/04/2020"
-output: html_document
+    author: "Willianto"
+        date: "20/04/2020"
+            output: html_document
 ---
 
 The platform specification used to process and analyse data:
@@ -202,7 +202,35 @@ topProp <- kable(propRank[1:10,])
 topProp
 ```
 
+
+
+```{r, ProcessTotalCropPropDamage}
+## Using Aggregate function to sum the 'CROP Damage' + 'Property Damage' based on EVTYPE and assign it to totalImpact
+totalEconomic <- aggregate((expData$PROP_DMG + expData$CROP_DMG) ~ EVTYPE, data = expData, FUN = sum, na.rm = TRUE)
+
+## Assign the column with name the new table of the total FATALITIES and INJURIES combined.
+names(totalEconomic) <- c("EVENT TYPE", "Total Crop & Property Damage in $Million")
+```
+
+
+```{r, MergingTwoEconomicData}
+## Using the Merge function to combine the two economic data together to show the economic impact
+economicImpact <- merge(cropProp, totalEconomic)
+
+## Rank the top economic impact on the new combined data
+economicImpactRank <- economicImpact[order(-economicImpact$'Total Crop & Property Damage'), ]
+
+## Top 10 Total Health Impact (CROP + PROPERTY DAMAGE) causing EVTYPE
+topEconomicImpact <- kable(economicImpactRank[1:10,])
+
+## Please go to the Result section to look at the top 10 economic impact based on EVTYPE.
+topEconomicImpact
+```
 ***
 
 ### Results
+
+#### Impact on Population Health
+
+
 
